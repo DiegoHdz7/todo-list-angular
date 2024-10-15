@@ -1,0 +1,48 @@
+# compiled output
+dist/
+build/
+
+# dependencies
+node_modules/
+bower_components/
+
+# optional npm cache directory
+.npm/
+
+# optional yarn cache directory
+.yarn/
+.pnp.*
+.pnp
+
+# local environment
+.env
+.env.*
+
+# angular files
+.angular/
+.angular/cache/
+
+# IDEs and editors
+.idea/
+.project
+.settings/
+.vscode/
+*.sublime-workspace
+
+# misc
+.DS_Store
+Thumbs.db
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Logs
+logs
+*.log
+*.log.*
+
+# Temp
+tmp/
+temp/
