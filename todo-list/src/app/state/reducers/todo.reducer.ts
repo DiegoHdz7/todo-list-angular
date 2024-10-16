@@ -15,7 +15,7 @@ export const  initialState: TodoState ={
 
 //on(actionType, handlerFunction)
 //the handler function usually is likt this -> (state, action) => newState
-export const todoReducer = createReducer(
+export const todosReducer = createReducer(
     initialState,
     on(loadTodosSuccess, onloadTodosSuccess),
     on(createTodo, (state,{todo})=>({...state,todos:[...state.todos,todo]})),
