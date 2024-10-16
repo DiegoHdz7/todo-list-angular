@@ -19,7 +19,7 @@ export const todosReducer = createReducer(
     initialState,
     on(loadTodosSuccess, onloadTodosSuccess),
     on(createTodo, (state,{todo})=>({...state,todos:[...state.todos,todo]})),
-    on(updateTodo, (state, {todo})=>{
+    on(updateTodo, (state, {todo}:{todo:Todo})=>{
         const updatedTodos = state.todos.map((todoMap)=>{
             if(todoMap.id === todo.id){
                 return todo;

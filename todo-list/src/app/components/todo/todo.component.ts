@@ -68,8 +68,20 @@ export class TodoComponent {
     }
   }
 
-  updateTodo(todo:Todo){
-    this.store.dispatch(updateTodo({todo:todo}))
+  updateTodo(){
+    if(this.todoForm.valid)
+    {
+      const newTodo =
+      {
+        ...this.todoForm.value,
+        id: +this.todoForm.value.id // Use the unary plus operator to convert the id to a number
+      }
+      this.store.dispatch(updateTodo({todo:newTodo}))
+
+    }
+
+    console.log('updatedTodos',this.todos)
+    
   }
 
   deleteTodo(todoId:number){
