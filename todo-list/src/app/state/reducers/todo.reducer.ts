@@ -18,7 +18,7 @@ export const  initialState: TodoState ={
 export const todosReducer = createReducer(
     initialState,
     on(loadTodosSuccess, onloadTodosSuccess),
-    on(createTodo, (state,{todo})=>({...state,todos:[...state.todos,todo]})),
+    on(createTodo,onCreateTodo),
     on(updateTodo, (state, {todo}:{todo:Todo})=>{
         const updatedTodos = state.todos.map((todoMap)=>{
             if(todoMap.id === todo.id){
@@ -34,6 +34,18 @@ export const todosReducer = createReducer(
 
 );
 
+function onCreateTodo(state:TodoState, action:{todo:Todo}){
+    
+    const lastIndex = state.todos.length-1;
+    const newId= state.todos[lastIndex].id+1;
+    const newTodo = {
+        ...action.todo,
+        id:newId
+    }
+    
+
+    return {...state, todos:[...state.todos,newTodo]}
+}
 function onDeleteTodo(state:TodoState, action:{todoId:number}){
     const newTodos = state.todos.filter((todo)=>todo.id!==action.todoId)
     return {...state, todos:newTodos}

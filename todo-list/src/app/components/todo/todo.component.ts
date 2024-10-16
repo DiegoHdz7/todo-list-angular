@@ -49,15 +49,15 @@ export class TodoComponent {
   createTodo() {
     console.log('create todo')
 
-    const newId= this.todos.length+1;
+    
     if (this.todoForm.valid) { // Check if the form is valid before proceeding
       const newTodo: Todo = {
-        id: newId,
+        id: 0,
         title: this.todoForm.value.title,
         completed: this.todoForm.value.completed
       };
   
-      this.store.dispatch(createTodo({ todo: newTodo }));
+      this.store.dispatch(createTodo({ todo: newTodo}));
       this.todoForm.reset({
         id: 0,              // Reset 'id' to 0
         title: '',          // Reset 'title' to an empty string
