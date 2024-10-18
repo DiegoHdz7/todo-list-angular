@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { Todo } from "../../models/Todo";
-import { loadTodosSuccess,createTodo,updateTodo,deleteTodo } from "../actions/todo.actions";
+import { loadTodosSuccess,createTodo,updateTodo,deleteTodo, loadTodos } from "../actions/todo.actions";
 import { Action } from "rxjs/internal/scheduler/Action";
 
 export interface TodoState {
@@ -17,6 +17,7 @@ export const  initialState: TodoState ={
 //the handler function usually is likt this -> (state, action) => newState
 export const todosReducer = createReducer(
     initialState,
+    on(loadTodos, (state)=>({...state})),
     on(loadTodosSuccess, onloadTodosSuccess),
     on(createTodo,onCreateTodo),
     on(updateTodo, (state, {todo}:{todo:Todo})=>{

@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { createTodo, updateTodo,deleteTodo, loadTodosSuccess } from '../../state/actions/todo.actions';
+import { createTodo, updateTodo,deleteTodo, loadTodosSuccess, loadTodos } from '../../state/actions/todo.actions';
 import { selectAllTodos } from '../../state/selectors/todo.selector';
 import { Todo } from '../../models/Todo';
-import { CommonModule } from '@angular/common';
+import { CommonModule} from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { initialState } from '../../state/reducers/todo.reducer';
+import {  Subscription } from 'rxjs';
+import { HttpClientModule } from '@angular/common/http';
+import { TodoService } from '../../services/todo-service.service';
 
 @Component({
   selector: 'app-todo',
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule, FormsModule],
+  imports: [CommonModule,ReactiveFormsModule, FormsModule, HttpClientModule],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.scss'
 })
@@ -22,7 +22,7 @@ export class TodoComponent {
   todoForm:FormGroup;
   todos:Todo[]=[]
 
-  constructor(private store:Store, private fb:FormBuilder){
+  constructor(private store:Store, private fb:FormBuilder, private todoService:TodoService){
     this.todoForm = this.fb.group({
       id: [0, Validators.required], // Default value of id
       title: ['', [Validators.required, Validators.minLength(3)]], // Title field with validators
@@ -32,8 +32,8 @@ export class TodoComponent {
 
   ngOnInit(){
     const initialTodos: Todo[] = [
-      { id: 1, title: 'Learn NgRx', completed:false },
-      { id: 2, title: 'Build a Todo App', completed:false }
+      { id: 1, title: 'Learn NgRx', completed:false},
+      { id: 2, title: 'Build a Todo App', completed:false}
     ];
 
     this.store.dispatch(loadTodosSuccess({ todos: initialTodos }));
@@ -46,12 +46,13 @@ export class TodoComponent {
     });
   }
 
-  createTodo() {
+   createTodo() {
     console.log('create todo')
 
     
     if (this.todoForm.valid) { // Check if the form is valid before proceeding
       const newTodo: Todo = {
+  
         id: 0,
         title: this.todoForm.value.title,
         completed: this.todoForm.value.completed
@@ -97,6 +98,98 @@ export class TodoComponent {
   get completedControl() {
     return this.todoForm.get('completed');
   }
+
+  httpCreateTodo(){
+
+    if(this.todoForm.valid)
+    {
+      const newTodo = {
+        _id:null,
+        id:this.todoForm.value.id,
+        title:this.todoForm.value.title,
+        completed:this.todoForm.value.completed
+      }
+
+      this.todoService.createTodo(newTodo).subscribe({
+        next:(response)=>{
+          console.log('response',response);
+          this.todoForm.reset({
+            id: 0,              // Reset 'id' to 0
+            title: '',          // Reset 'title' to an empty string
+            completed: false 
+          }); 
+          this.store.dispatch(createTodo({todo:newTodo}))
+          
+
+        },
+        error: ()=>{
+
+        }
+      })
+
+    }
+  }
+
+
+  httpDeleteTodo(){
+    
+   
+      this.todoService.deleteTodo(this.todoForm.value.id).subscribe({
+        next:(response)=>{
+          console.log('response',response); 
+        },
+        error: (error)=>{
+          console.log('response',error); 
+  
+        }
+      })
+
+    
+   
+  }
+  httpUpdateTodo(){
+    if(this.todoForm.valid){
+      this.todoService.updateTodo(this.todoForm.value).subscribe({
+        next:(response)=>{
+          console.log('response',response); 
+        },
+        error: (error)=>{
+          console.log('response',error); 
+  
+        }
+      })
+
+    }
+    
+  }
+  httpGetAllTodos(){
+    // this.todoService.getTodos().subscribe(
+    //   {
+    //     next:(response)=>{
+    //       console.log(response)
+    //     },
+    //     error:(error)=>{
+    //       console.log(error)
+    //     }
+    //   }
+    // )
+    this.store.dispatch(loadTodos())
+    
+  }
+  httpGetTodo(){
+    this.todoService.getTodo(this.todoForm.value.id).subscribe(
+      {
+        next:(response)=>{
+          console.log(response)
+        },
+        error:(error)=>{
+          console.log(error)
+        }
+      }
+    )
+    
+  }
+
 
   ngOnDestroy() {
     // Unsubscribe to avoid memory leaks when the component is destroyed

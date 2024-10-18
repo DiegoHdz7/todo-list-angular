@@ -1,58 +1,90 @@
 <div class="container mt-4 text-dark">
-    <h2>Todo Form</h2>
 
-    <div class="container mt-4 ">
+    <div class="row">
         <form [formGroup]="todoForm">
-
+        
             <div class="form-group">
                 <label for="title">ID</label>
                 <input type="text" id="title" formControlName="id" class="form-control" />
                 <div *ngIf="idControl?.invalid && (idControl?.dirty || idControl?.touched)" class="text-danger">
-                  <small *ngIf="idControl?.errors?.['required']">Title is required.</small>
+                    <small *ngIf="idControl?.errors?.['required']">Title is required.</small>
                 </div>
-              </div>
-
-          <div class="form-group">
-            <label for="title">Todo Title</label>
-            <input type="text" id="title" formControlName="title" class="form-control" />
-            <div *ngIf="titleControl?.invalid && (titleControl?.dirty || titleControl?.touched)" class="text-danger">
-              <small *ngIf="titleControl?.errors?.['required']">Title is required.</small>
-              <small *ngIf="titleControl?.errors?.['minlength']">Title must be at least 3 characters long.</small>
             </div>
-          </div>
-      
-          <div class="form-group">
-            <label for="completed">Completed</label>
-            <input type="checkbox" id="completed" formControlName="completed" />
-            <!-- No need for validation message as completed is a boolean -->
-          </div>
-      
-          <button type="button" class="btn btn-primary" [disabled]="todoForm.invalid" (click)="createTodo()">Create Todo</button>
-          <button type="button" class="btn btn-secondary" [disabled]="todoForm.invalid" (click)="updateTodo()">Update Todo</button>
-         
+
+            <div class="form-group">
+                <label for="title">Todo Title</label>
+                <input type="text" id="title" formControlName="title" class="form-control" />
+                <div *ngIf="titleControl?.invalid && (titleControl?.dirty || titleControl?.touched)"
+                    class="text-danger">
+                    <small *ngIf="titleControl?.errors?.['required']">Title is required.</small>
+                    <small *ngIf="titleControl?.errors?.['minlength']">Title must be at least 3 characters long.</small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="completed">Completed</label>
+                <input type="checkbox" id="completed" formControlName="completed" />
+                <!-- No need for validation message as completed is a boolean -->
+            </div>
+
+            
+
         </form>
+        <div class="col-6">
+            <h2>Todo Form</h2>
+
+            <button type="button" class="btn btn-primary" [disabled]="todoForm.invalid" (click)="createTodo()">Create
+                Todo</button>
+            <button type="button" class="btn btn-secondary" [disabled]="todoForm.invalid" (click)="updateTodo()">Update
+                Todo</button>
+
+            <div class="container mt-4 ">
+               
+            </div>
+        
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">TITLE</th>
+                        <th scope="col">COMPLETED</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let todo of todos$ |async">
+                        <th scope="row"> {{todo.id}}</th>
+                        <td>{{todo.title}}</td>
+                        <td>{{todo.completed}}</td>
+                        <td> <button type="button" class="btn btn-danger" (click)="deleteTodo(todo.id)">Delete</button>
+                        <td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="col-6">
+            <div class="d-flex flex-column">
+                <h1>Http Actions</h1>
+                <button type="button" class="btn btn-secondary my-2" [disabled]="todoForm.invalid" (click)="httpCreateTodo()"> Create</button>
+                <button type="button" class="btn btn-secondary my-2" [disabled]="todoForm.value.id == null" (click)="httpDeleteTodo()"> Delete</button>
+                <button type="button" class="btn btn-secondary my-2" [disabled]="todoForm.invalid" (click)="httpUpdateTodo()"> Update</button>
+                <button type="button" class="btn btn-secondary my-2" (click)="httpGetAllTodos()"> Get All</button>
+                <button type="button" class="btn btn-secondary my-2" (click)="httpGetTodo()"> Get Todo</button>
+            </div>
+
+                
+
+        </div>
+
     </div>
 
-    <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">TITLE</th>
-            <th scope="col">COMPLETED</th>
-            <th scope="col">Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let todo of todos$ |async">
-            <th scope="row"> {{todo.id}}</th>
-            <td>{{todo.title}}</td>
-            <td>{{todo.completed}}</td>
-            <td> <button type="button" class="btn btn-danger"  (click)="deleteTodo(todo.id)">Delete</button><td>
-          </tr>
-        </tbody>
-      </table>
+   
 
 
-  
-    
-  </div>
+
+
+
+
+</div>
