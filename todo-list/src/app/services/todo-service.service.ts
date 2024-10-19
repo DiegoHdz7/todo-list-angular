@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Todo } from '../models/Todo';
-import { Observable } from 'rxjs';
+import { catchError, EMPTY, Observable, of, switchMap } from 'rxjs';
 
 
 @Injectable({
@@ -30,7 +30,31 @@ export class TodoService {
   }
 
   createTodo(todo:Todo):Observable<HttpResponse<Todo>>{
-    return this.http.post<Todo> (this.apiUrl+"/create", todo,{ observe:'response'})
+    let todos:Todo[];
+
+    return this.getTodos().pipe(
+      switchMap( (response)=>{
+        if(response.ok){
+          const todos: Todo[] = response.body || [];
+          const newId = todos.length > 0 ? todos[todos.length - 1].id + 1 : 1; // Handle empty array case
+          const newTodo = { ...todo, id: newId };
+          return this.http.post<Todo> (this.apiUrl+"/create", newTodo,{ observe:'response'})
+        }
+        else {
+          // Throwing an error to indicate failure
+          throw new Error('Failed to get all todos from createTodoHttpRequest');
+        }
+       
+      }),
+     catchError((err)=>{
+      console.log(err)
+      return EMPTY
+     })
+    )
+   
+
+    
+    
   }
 
   updateTodo(todo:Todo):Observable<HttpResponse<any>>{

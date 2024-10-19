@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { createTodo, updateTodo,deleteTodo, loadTodosSuccess, loadTodos } from '../../state/actions/todo.actions';
+import { createTodoSuccess, updateTodo,deleteTodo, loadTodosSuccess, loadTodos, createTodo } from '../../state/actions/todo.actions';
 import { selectAllTodos } from '../../state/selectors/todo.selector';
 import { Todo } from '../../models/Todo';
 import { CommonModule} from '@angular/common';
@@ -36,7 +36,8 @@ export class TodoComponent {
       { id: 2, title: 'Build a Todo App', completed:false}
     ];
 
-    this.store.dispatch(loadTodosSuccess({ todos: initialTodos }));
+    this.store.dispatch(loadTodos());
+
 
     //you can subscribe via this, or using the | async pipe in the view, 
     //the async pipe automatically subscribes and unsubcribes  
@@ -44,6 +45,8 @@ export class TodoComponent {
     this.todosSubscription = this.todos$.subscribe((todos:Todo[]) => {
       this.todos = todos // Log the current todos to the console
     });
+
+    
   }
 
    createTodo() {
@@ -58,7 +61,7 @@ export class TodoComponent {
         completed: this.todoForm.value.completed
       };
   
-      this.store.dispatch(createTodo({ todo: newTodo}));
+      this.store.dispatch(createTodoSuccess({ todo: newTodo}));
       this.todoForm.reset({
         id: 0,              // Reset 'id' to 0
         title: '',          // Reset 'title' to an empty string
@@ -104,28 +107,29 @@ export class TodoComponent {
     if(this.todoForm.valid)
     {
       const newTodo = {
-        _id:null,
         id:this.todoForm.value.id,
         title:this.todoForm.value.title,
         completed:this.todoForm.value.completed
       }
 
-      this.todoService.createTodo(newTodo).subscribe({
-        next:(response)=>{
-          console.log('response',response);
-          this.todoForm.reset({
-            id: 0,              // Reset 'id' to 0
-            title: '',          // Reset 'title' to an empty string
-            completed: false 
-          }); 
-          this.store.dispatch(createTodo({todo:newTodo}))
+      this.store.dispatch(createTodo({todo:newTodo}))
+
+      // this.todoService.createTodo(newTodo).subscribe({
+      //   next:(response)=>{
+      //     console.log('response',response);
+      //     this.todoForm.reset({
+      //       id: 0,              // Reset 'id' to 0
+      //       title: '',          // Reset 'title' to an empty string
+      //       completed: false 
+      //     }); 
+      //     this.store.dispatch(createTodoSuccess({todo:newTodo}))
           
 
-        },
-        error: ()=>{
+      //   },
+      //   error: ()=>{
 
-        }
-      })
+      //   }
+      // })
 
     }
   }
@@ -149,15 +153,17 @@ export class TodoComponent {
   }
   httpUpdateTodo(){
     if(this.todoForm.valid){
-      this.todoService.updateTodo(this.todoForm.value).subscribe({
-        next:(response)=>{
-          console.log('response',response); 
-        },
-        error: (error)=>{
-          console.log('response',error); 
+      // this.todoService.updateTodo(this.todoForm.value).subscribe({
+      //   next:(response)=>{
+      //     console.log('response',response); 
+      //   },
+      //   error: (error)=>{
+      //     console.log('response',error); 
   
-        }
-      })
+      //   }
+      // })
+
+      this.store.dispatch(updateTodo({todo:this.todoForm.value}))
 
     }
     
